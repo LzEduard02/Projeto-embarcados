@@ -1,0 +1,133 @@
+
+
+#include <WiFi.h>
+#include "PubSubClient.h"
+#include <ArduinoJson.h>
+#include <Wire.h>
+
+//const char* ssid = "Wokwi-GUEST";
+const char* ssid = "ifsp-ibge-1";
+const char* password = "ifspcatanduva"; 
+const char* mqttServer = "awsluiz.duckdns.org";
+const int mqttPort = 1883;
+const char* mqttTopic = "casa/controle";
+const char* clientId = "ESP32";
+
+const int analogPin = 36;
+const int ledAcesso = 27; //Pino led de acesso
+const int ledNegado = 12; //pino do led reset
+const int ledAlerta = 13; //pino do led de alerta
+const int buzzerPin = 14;  // Pino do buzzer
+int lastSensorValue = 0, valorLimite=50;
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+bool sensorAtivado = true;
+
+void mqttSendJson(float valor1){
+    //Envia a mensagem ao broker
+     /// . produzindo mensagem
+    DynamicJsonDocument doc(1024);
+    doc["device"] = "ESP32";
+    doc["temperatura"] = valor1;
+    char JSONmessageBuffer[200];
+    serializeJson(doc, JSONmessageBuffer);
+    client.publish("esp32/sensor", JSONmessageBuffer);
+    Serial.print("msg json enviado: ");
+    Serial.println(JSONmessageBuffer);
+}
+
+void mqttSendJsonIO(void){
+    //Envia a mensagem ao broker
+     /// . produzindo mensagem
+    DynamicJsonDocument doc(1024);
+    doc["device"] = "ESP32";
+    doc["OUT1"] = digitalRead(ledAcesso);
+    doc["OUT2"] = digitalRead(ledNegado);
+    char JSONmessageBuffer[200];
+    serializeJson(doc, JSONmessageBuffer);
+    client.publish("esp32/out", JSONmessageBuffer);
+    Serial.print("msg json out enviado: ");
+    Serial.println(JSONmessageBuffer);
+}
+
+void setup() {
+  pinMode(ledAcesso, OUTPUT);
+  pinMode(ledNegado, OUTPUT);
+  pinMode(ledAlerta, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(34, INPUT);
+  pinMode(35, INPUT);
+
+  Serial.begin(9600);
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+
+  Serial.println("Connected to WiFi");
+
+  client.setServer(mqttServer, mqttPort);
+  client.setCallback(callback);
+
+  while (!client.connected()) {
+    Serial.println("Connecting to MQTT...");
+
+    if (client.connect(clientId)) {
+      Serial.println("Connected to MQTT");
+      client.subscribe(mqttTopic);
+    } else {
+      Serial.print("MQTT connection failed, retrying in 5 seconds...");
+      delay(5000);
+    }
+  }
+}
+
+void loop() {
+  client.loop();
+
+if (sensorAtivado) {
+    int sensorValue = analogRead(analogPin);
+    // analise se o valor analógico teve variação maior que 10
+    if (abs(sensorValue - lastSensorValue) >= 10) {
+      client.publish("esp32/sensorraw", String(sensorValue).c_str());
+    lastSensorValue = sensorValue;
+    float valor=((float)sensorValue/4095)*100;
+     mqttSendJson(valor);
+     mqttSendJsonIO();
+     if (valor <= valorLimite && digitalRead(ledAcesso) == LOW) {
+  digitalWrite(ledAlerta, HIGH);
+   tone(buzzerPin, 1000, 1000);
+   delay(1000);
+   digitalWrite(ledAlerta, LOW);
+   noTone(buzzerPin);
+} 
+    }
+  }
+
+
+
+  delay(500);
+}
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  String topicStr = topic;
+  if (topicStr.equals("casa/controle")) {
+    String payloadStr = "";
+    for (int i = 0; i < length; i++) {
+      payloadStr += (char)payload[i];
+    }
+
+    if (payloadStr.equals("on")) {
+      sensorAtivado = false; // Desliga o sensor
+      digitalWrite(ledAcesso, HIGH);
+       digitalWrite(ledNegado, LOW);
+    } else if (payloadStr.equals("off")) {
+      sensorAtivado = true; // Liga o sensor novamente
+      digitalWrite(ledAcesso, LOW);
+       digitalWrite(ledNegado, HIGH);
+    }
+  }
+}
