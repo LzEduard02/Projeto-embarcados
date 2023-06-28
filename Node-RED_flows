@@ -1,0 +1,1301 @@
+[
+    {
+        "id": "1ec0a21f3604a711",
+        "type": "tab",
+        "label": "FreeRTOS",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "dcf34c825966a21b",
+        "type": "ui_gauge",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "group": "a139738a6814e2a9",
+        "order": 2,
+        "width": 6,
+        "height": 4,
+        "gtype": "gage",
+        "title": "distancia",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 840,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "616c5344151de55f",
+        "type": "json",
+        "z": "1ec0a21f3604a711",
+        "name": "converter",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 240,
+        "y": 420,
+        "wires": [
+            [
+                "97956af4f05cd01e"
+            ]
+        ]
+    },
+    {
+        "id": "97956af4f05cd01e",
+        "type": "function",
+        "z": "1ec0a21f3604a711",
+        "name": "separa_campos",
+        "func": "var temperatura = {  payload : msg.payload.temperatura } \nvar humidade = {  payload : msg.payload.humidade } \n\n\nreturn [ temperatura, humidade ];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 420,
+        "wires": [
+            [
+                "e877816ac5267625",
+                "6089ba716e6b034a"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "d28cb72f02d52b07",
+        "type": "mqtt in",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "topic": "esp32/sensor",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "de3310171dcf0dd3",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 90,
+        "y": 420,
+        "wires": [
+            [
+                "616c5344151de55f"
+            ]
+        ]
+    },
+    {
+        "id": "e877816ac5267625",
+        "type": "change",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "temperatura °C",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 640,
+        "y": 440,
+        "wires": [
+            [
+                "dcf34c825966a21b"
+            ]
+        ]
+    },
+    {
+        "id": "6089ba716e6b034a",
+        "type": "function",
+        "z": "1ec0a21f3604a711",
+        "name": "global_distancia",
+        "func": "global.set(\"temperatura\", msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f22ac92c18167c39",
+        "type": "mqtt in",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "topic": "esp32/out",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "de3310171dcf0dd3",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 80,
+        "y": 720,
+        "wires": [
+            [
+                "86f0e7afb1fafe4d",
+                "b4b8b59b98dae3a4"
+            ]
+        ]
+    },
+    {
+        "id": "86f0e7afb1fafe4d",
+        "type": "json",
+        "z": "1ec0a21f3604a711",
+        "name": "converter",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 220,
+        "y": 760,
+        "wires": [
+            [
+                "e4db481ffc67dbdf",
+                "b4b8b59b98dae3a4"
+            ]
+        ]
+    },
+    {
+        "id": "e4db481ffc67dbdf",
+        "type": "function",
+        "z": "1ec0a21f3604a711",
+        "name": "separa_campos",
+        "func": "var out1 = { payload: msg.payload.OUT1 }\nvar out2 = { payload: msg.payload.OUT2 }\nreturn [out1, out2];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 760,
+        "wires": [
+            [],
+            [
+                "1e17826d5380264e"
+            ]
+        ]
+    },
+    {
+        "id": "8db5da26b172e88e",
+        "type": "change",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "1",
+                "fromt": "str",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 680,
+        "y": 680,
+        "wires": [
+            [
+                "84c6e09eb6d87f7b",
+                "121d9c1a3dfd386a"
+            ]
+        ]
+    },
+    {
+        "id": "9c8d98267a208ff6",
+        "type": "change",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "0",
+                "fromt": "num",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 840,
+        "wires": [
+            [
+                "84c6e09eb6d87f7b",
+                "121d9c1a3dfd386a"
+            ]
+        ]
+    },
+    {
+        "id": "2e652551fa6e3f95",
+        "type": "debug",
+        "z": "1ec0a21f3604a711",
+        "name": "resultado",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "0f1daae6bd8acc9a",
+        "type": "function",
+        "z": "1ec0a21f3604a711",
+        "name": "INSERT",
+        "func": " \nvar temperatura = global.get(\"temperatura\");\n\n// Cria uma declaração preparada com espaços reservados\nmsg.topic = \"INSERT INTO tempLog (temperature) VALUES (?);\"\n\n// Cria um array de valores a serem inseridos\nmsg.payload = [temperatura];\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 1100,
+        "wires": [
+            [
+                "38238991104e9062",
+                "6bb7f9d6bfd58e43"
+            ]
+        ]
+    },
+    {
+        "id": "e30baa3b6def6e96",
+        "type": "inject",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "30",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 1200,
+        "wires": [
+            [
+                "7dcab26dd67ea55c"
+            ]
+        ]
+    },
+    {
+        "id": "7dcab26dd67ea55c",
+        "type": "function",
+        "z": "1ec0a21f3604a711",
+        "name": "SELECT",
+        "func": "msg.topic = \"SELECT temperature as distancia, timeStamp as timeStamp FROM tempLog where timeStamp >= now() - 84600;\"\nreturn msg;\n\n//msg.topic = \"SELECT * FROM tempLog where timeStamp >= now() - 84600;\"\n\n//msg.topic = \"SELECT temperature as temperatura, humidity as humidade, timeStamp FROM tempLog where timeStamp >= now() - 84600;\"\n\n//msg.topic = \"INSERT INTO tempLog (temperature,humidity) VALUES (\"+temperatura+\",\"+humidade+\" );\"\n\n//SELECT MAX(\"producaocatanduva\") as producao, time FROM \"Solar_IFSP\"  WHERE time >= now() - 30d GROUP BY time(1d)",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 1200,
+        "wires": [
+            [
+                "13dbe77c2aa93403"
+            ]
+        ]
+    },
+    {
+        "id": "99fba243a9399a9c",
+        "type": "comment",
+        "z": "1ec0a21f3604a711",
+        "name": "Mysql: Select últimos 10 dados para grafico e tabela",
+        "info": "",
+        "x": 230,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "23eb0f085e841665",
+        "type": "change",
+        "z": "1ec0a21f3604a711",
+        "name": "Format data",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "(\t  $series := [\t    { \"label\": \"distancia(m)\" , \"field\": \"distancia\"  }\t   \t  ];\t  $xaxis := \"timeStamp\";\t  [\t    {\t      \"series\": $series.label,\t      \"data\": $series.[\t        (\t          $yaxis := $.field;\t          $$.payload.{\t            \"x\": $lookup($, $xaxis)\t   \t          }\t        )\t      ]\t    }\t  ]\t)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 1200,
+        "wires": [
+            [
+                "2fd8ab99b46f6c7a"
+            ]
+        ]
+    },
+    {
+        "id": "2fd8ab99b46f6c7a",
+        "type": "ui_chart",
+        "z": "1ec0a21f3604a711",
+        "name": "24 hours data",
+        "group": "3c1b09fa4c168fdf",
+        "order": 1,
+        "width": 6,
+        "height": "7",
+        "label": "Gráfico distancia",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "24",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#00e68c",
+            "#2d2da8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 860,
+        "y": 1260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "925e2fb7557d49b4",
+        "type": "comment",
+        "z": "1ec0a21f3604a711",
+        "name": "Grava numero aleatorio em mysql",
+        "info": "",
+        "x": 160,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "3ba79a2cd4466918",
+        "type": "debug",
+        "z": "1ec0a21f3604a711",
+        "name": "dados mysql",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 670,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "9ee4395c6d8ca30b",
+        "type": "function",
+        "z": "1ec0a21f3604a711",
+        "name": "DELET",
+        "func": "\nmsg.topic = \"Delete  FROM tempLog ;\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 1420,
+        "wires": [
+            [
+                "e7c2cce7b7313f29"
+            ]
+        ]
+    },
+    {
+        "id": "925ef4818054705e",
+        "type": "debug",
+        "z": "1ec0a21f3604a711",
+        "name": "dados mysql",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 710,
+        "y": 1420,
+        "wires": []
+    },
+    {
+        "id": "dcdff94ce0c2a2ac",
+        "type": "function",
+        "z": "1ec0a21f3604a711",
+        "name": "SELECT",
+        "func": "\nmsg.topic = \"SELECT * FROM tempLog WHERE temperature < 49 ORDER BY timeStamp DESC LIMIT 10\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 1300,
+        "wires": [
+            [
+                "28f5027aa4737047"
+            ]
+        ]
+    },
+    {
+        "id": "046eb6493b4508e9",
+        "type": "ui_template",
+        "z": "1ec0a21f3604a711",
+        "group": "6a4e2e67017b39e7",
+        "name": "Tabela com style",
+        "order": 1,
+        "width": 10,
+        "height": 3,
+        "format": "<div layout=\"row\" layout-align=\"start center\">\n  <span flex>Data e Hora</span>\n  <span flex>STATUS</span>\n</div>\n<div layout=\"row\" layout-align=\"start center\" ng-repeat=\"row in msg.payload\">\n  <span flex style=\"color: green\">{{row.timeStamp | date:'dd/MM/yyyy HH:mm:ss'}}</span>\n  <span flex style=\"color: red\">{{row.temperature <= 50 ? 'ALERTA' : row.temperature + ' m'}}</span>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 690,
+        "y": 1300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e8992ca37aad8da3",
+        "type": "comment",
+        "z": "1ec0a21f3604a711",
+        "name": "Mysql: Select últimos 10 dados para grafico e tabela",
+        "info": "",
+        "x": 230,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "b4b8b59b98dae3a4",
+        "type": "debug",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 270,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "6bb7f9d6bfd58e43",
+        "type": "debug",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "53a1973383b7ac50",
+        "type": "mqtt out",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "topic": "casa/controle",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "de3310171dcf0dd3",
+        "x": 310,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "5d1061a93552b2c1",
+        "type": "ui_button",
+        "z": "1ec0a21f3604a711",
+        "name": "botão de acesso",
+        "group": "e20cd85b889eb118",
+        "order": 1,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "botão de acesso",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "on",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 100,
+        "y": 140,
+        "wires": [
+            [
+                "53a1973383b7ac50",
+                "264d1e505f0eefdb"
+            ]
+        ]
+    },
+    {
+        "id": "bbb4fa3f409df077",
+        "type": "ui_button",
+        "z": "1ec0a21f3604a711",
+        "name": "botão reinicia",
+        "group": "e20cd85b889eb118",
+        "order": 3,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "botão ativar sistema",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "off",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 90,
+        "y": 200,
+        "wires": [
+            [
+                "53a1973383b7ac50",
+                "264d1e505f0eefdb"
+            ]
+        ]
+    },
+    {
+        "id": "729d4506610e6346",
+        "type": "mqtt in",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "topic": "casa/controle",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "de3310171dcf0dd3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 90,
+        "y": 260,
+        "wires": [
+            [
+                "4b8f4a130c215783"
+            ]
+        ]
+    },
+    {
+        "id": "4b8f4a130c215783",
+        "type": "debug",
+        "z": "1ec0a21f3604a711",
+        "name": "debug 34",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 280,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "121d9c1a3dfd386a",
+        "type": "debug",
+        "z": "1ec0a21f3604a711",
+        "name": "debug 36",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "d3a5376a3275870e",
+        "type": "comment",
+        "z": "1ec0a21f3604a711",
+        "name": "Leitura de sensor",
+        "info": "",
+        "x": 100,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "3895a2c66fd6fd9a",
+        "type": "comment",
+        "z": "1ec0a21f3604a711",
+        "name": "controle ESP32",
+        "info": "",
+        "x": 220,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "cf9591e0d692ab97",
+        "type": "mqtt in",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "topic": "esp32/out",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "de3310171dcf0dd3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 80,
+        "y": 800,
+        "wires": [
+            [
+                "e5d949e80a00547e"
+            ]
+        ]
+    },
+    {
+        "id": "e5d949e80a00547e",
+        "type": "debug",
+        "z": "1ec0a21f3604a711",
+        "name": "debug 39",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 320,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "38238991104e9062",
+        "type": "mysql",
+        "z": "1ec0a21f3604a711",
+        "mydb": "0626cba2541f0a39",
+        "name": "conexao_mysql",
+        "x": 460,
+        "y": 1100,
+        "wires": [
+            [
+                "2e652551fa6e3f95"
+            ]
+        ]
+    },
+    {
+        "id": "13dbe77c2aa93403",
+        "type": "mysql",
+        "z": "1ec0a21f3604a711",
+        "mydb": "0626cba2541f0a39",
+        "name": "conexao_mysql",
+        "x": 460,
+        "y": 1200,
+        "wires": [
+            [
+                "23eb0f085e841665",
+                "3ba79a2cd4466918"
+            ]
+        ]
+    },
+    {
+        "id": "e7c2cce7b7313f29",
+        "type": "mysql",
+        "z": "1ec0a21f3604a711",
+        "mydb": "0626cba2541f0a39",
+        "name": "conexao_mysql",
+        "x": 480,
+        "y": 1420,
+        "wires": [
+            [
+                "925ef4818054705e"
+            ]
+        ]
+    },
+    {
+        "id": "28f5027aa4737047",
+        "type": "mysql",
+        "z": "1ec0a21f3604a711",
+        "mydb": "0626cba2541f0a39",
+        "name": "conexao_mysql",
+        "x": 460,
+        "y": 1300,
+        "wires": [
+            [
+                "046eb6493b4508e9"
+            ]
+        ]
+    },
+    {
+        "id": "84c6e09eb6d87f7b",
+        "type": "ui_led",
+        "z": "1ec0a21f3604a711",
+        "order": 4,
+        "group": "a139738a6814e2a9",
+        "width": "4",
+        "height": "2",
+        "label": "led alerta",
+        "labelPlacement": "left",
+        "labelAlignment": "center",
+        "colorForValue": [
+            {
+                "color": "#f50a51",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#0ae60a",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "led alerta",
+        "x": 840,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "6c6b1f205c64c06c",
+        "type": "comment",
+        "z": "1ec0a21f3604a711",
+        "name": "Leds notificação",
+        "info": "",
+        "x": 140,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "0972f52a4f1d690a",
+        "type": "mqtt in",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "topic": "esp32/sensor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "de3310171dcf0dd3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 110,
+        "y": 1040,
+        "wires": [
+            [
+                "0f1daae6bd8acc9a"
+            ]
+        ]
+    },
+    {
+        "id": "a843804163964050",
+        "type": "inject",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "30",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 1300,
+        "wires": [
+            [
+                "dcdff94ce0c2a2ac"
+            ]
+        ]
+    },
+    {
+        "id": "e11d20d66db4044f",
+        "type": "inject",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 1420,
+        "wires": [
+            [
+                "9ee4395c6d8ca30b"
+            ]
+        ]
+    },
+    {
+        "id": "4f448a8372754635",
+        "type": "inject",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 1100,
+        "wires": [
+            [
+                "0f1daae6bd8acc9a"
+            ]
+        ]
+    },
+    {
+        "id": "1e17826d5380264e",
+        "type": "switch",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 550,
+        "y": 760,
+        "wires": [
+            [
+                "8db5da26b172e88e"
+            ],
+            [
+                "9c8d98267a208ff6"
+            ]
+        ]
+    },
+    {
+        "id": "264d1e505f0eefdb",
+        "type": "mqtt out",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "topic": "esp32/acende",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "de3310171dcf0dd3",
+        "x": 320,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "bad9cdf513024958",
+        "type": "mqtt in",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "topic": "esp32/acende",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "de3310171dcf0dd3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 430,
+        "y": 60,
+        "wires": [
+            [
+                "e1671208d8e0be65"
+            ]
+        ]
+    },
+    {
+        "id": "feca74c53d6af017",
+        "type": "ui_led",
+        "z": "1ec0a21f3604a711",
+        "order": 5,
+        "group": "e20cd85b889eb118",
+        "width": 4,
+        "height": 2,
+        "label": "Led acesso",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#f70202",
+                "value": "false",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "true",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "",
+        "x": 870,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "e1671208d8e0be65",
+        "type": "switch",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "on",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "off",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 530,
+        "y": 120,
+        "wires": [
+            [
+                "e0a6b84f0ebd65ad"
+            ],
+            [
+                "84d7afeec2c31fe2"
+            ]
+        ]
+    },
+    {
+        "id": "e0a6b84f0ebd65ad",
+        "type": "change",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "on",
+                "fromt": "str",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 680,
+        "y": 60,
+        "wires": [
+            [
+                "feca74c53d6af017"
+            ]
+        ]
+    },
+    {
+        "id": "84d7afeec2c31fe2",
+        "type": "change",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "off",
+                "fromt": "str",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 660,
+        "y": 160,
+        "wires": [
+            [
+                "feca74c53d6af017"
+            ]
+        ]
+    },
+    {
+        "id": "77783ef0683e8a2b",
+        "type": "ui_text_input",
+        "z": "1ec0a21f3604a711",
+        "name": "",
+        "label": "senha",
+        "tooltip": "",
+        "group": "e20cd85b889eb118",
+        "order": 2,
+        "width": 4,
+        "height": 1,
+        "passthru": true,
+        "mode": "password",
+        "delay": 300,
+        "topic": "on",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "str",
+        "x": 70,
+        "y": 80,
+        "wires": [
+            [
+                "53a1973383b7ac50",
+                "264d1e505f0eefdb"
+            ]
+        ]
+    },
+    {
+        "id": "d51c5bc138c3fdd5",
+        "type": "ui_spacer",
+        "z": "1ec0a21f3604a711",
+        "name": "spacer",
+        "group": "e20cd85b889eb118",
+        "order": 4,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "6b6610ee9124be6f",
+        "type": "ui_spacer",
+        "z": "1ec0a21f3604a711",
+        "name": "spacer",
+        "group": "a139738a6814e2a9",
+        "order": 3,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "a139738a6814e2a9",
+        "type": "ui_group",
+        "name": "MONITORAMENTO",
+        "tab": "33772a5a27db8036",
+        "order": 3,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "de3310171dcf0dd3",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "awsluiz.duckdns.org",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "3c1b09fa4c168fdf",
+        "type": "ui_group",
+        "name": "grafico_mysql",
+        "tab": "3046f6ea24ac700b",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6a4e2e67017b39e7",
+        "type": "ui_group",
+        "name": "Tabela mysql",
+        "tab": "33772a5a27db8036",
+        "order": 5,
+        "disp": true,
+        "width": "10",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e20cd85b889eb118",
+        "type": "ui_group",
+        "name": "Controle",
+        "tab": "33772a5a27db8036",
+        "order": 1,
+        "disp": true,
+        "width": "4",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "0626cba2541f0a39",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "mysql.cwhbt6vh41ec.us-east-1.rds.amazonaws.com",
+        "port": "3306",
+        "db": "sensor",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "33772a5a27db8036",
+        "type": "ui_tab",
+        "name": "projeto embarcados",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "3046f6ea24ac700b",
+        "type": "ui_tab",
+        "name": "FreeRtos",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
